@@ -1,8 +1,15 @@
+import * as firebase from 'firebase'
+import * as apiKeys from './config/keys'
 import {StatusBar} from 'expo-status-bar'
 import React from 'react'
 import {StyleSheet, Text, View} from 'react-native'
 import Providers from './navigation'
 
-export default function App() {
+export default App = () => {
+  if (!firebase.apps.length) {
+    console.log('Connected with firebase', apiKeys.firebaseConfig)
+    firebase.initializeApp(apiKeys.firebaseConfig)
+  }
+
   return <Providers />
 }
