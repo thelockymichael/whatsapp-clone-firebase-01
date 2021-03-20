@@ -19,8 +19,17 @@ export default AddRoomScreen = ({navigation}) => {
         .collection('THREADS')
         .add({
           name: roomName,
+          latestMessage: {
+            text: `You have joined the room ${roomName}.`,
+            createdAt: new Date().getTime(),
+          },
         })
-        .then(() => {
+        .then((docRef) => {
+          docRef.collection('MESSAGES').add({
+            text: `You have joined the room ${roomName}.`,
+            createdAt: new Date().getTime(),
+            system: true,
+          })
           navigation.navigate('Home')
         })
     }

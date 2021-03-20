@@ -1,9 +1,25 @@
-import React, {useState} from 'react'
-import {GiftedChat, Bubble, Send} from 'react-native-gifted-chat'
+import React, {useState, useEffect, useContext} from 'react'
+import {GiftedChat, Bubble, Send, SystemMessage} from 'react-native-gifted-chat'
 import {IconButton} from 'react-native-paper'
 import {View, StyleSheet, ActivityIndicator} from 'react-native'
 
-export default RoomScreen = () => {
+import {AuthContext} from '../navigation/AuthProvider'
+
+import * as firebase from 'firebase'
+import 'firebase/firestore'
+
+export default RoomScreen = ({route}) => {
+  // Get logged in user data from Context
+  const {user} = useContext(AuthContext)
+  // Convert user data to readable JSON
+  const currentUser = user.toJSON()
+
+  const {thread} = route.params
+
+  useEffect(() => {
+    console.log({user})
+  }, [])
+
   const [messages, setMessages] = useState([
     /**
      * Mock message data
@@ -26,6 +42,82 @@ export default RoomScreen = () => {
       },
     },
   ])
+
+  const renderSystemMessage = (props) => {
+    return (
+      <SystemMessage
+        {...props}
+        wrapperStyle={styles.systemMessageWrapper}
+        textStyle={styles.systemMessageText}
+      />
+    )
+  }
+
+  const handleSend = async (messages) => {
+    const text = messages[0].text
+
+    firebase
+      .firestore()
+      .collection('THREADS')
+      .doc(thread._id)
+      .collection('MESSAGES')
+      .add({
+        text,
+        createdAt: new Date().getTime(),
+        user: {
+          _id: currentUser.uid,
+          email: currentUser.email,
+        },
+      })
+
+    await firebase
+      .firestore()
+      .collection('THREADS')
+      .doc(thread._id)
+      .set(
+        {
+          latestMessage: {
+            text,
+            createdAt: new Date().getTime(),
+          },
+        },
+        {merge: true}
+      )
+  }
+
+  useEffect(() => {
+    const messagesListener = firebase
+      .firestore()
+      .collection('THREADS')
+      .doc(thread._id)
+      .collection('MESSAGES')
+      .orderBy('createdAt', 'desc')
+      .onSnapshot((querySnapshot) => {
+        const messages = querySnapshot.docs.map((doc) => {
+          const firebaseData = doc.data()
+
+          const data = {
+            _id: doc.id,
+            text: '',
+            createdAt: new Date().getTime(),
+            ...firebaseData,
+          }
+
+          if (!firebaseData.system) {
+            data.user = {
+              ...firebaseData.user,
+              name: firebaseData.user.email,
+            }
+          }
+
+          return data
+        })
+
+        setMessages(messages)
+      })
+
+    return () => messagesListener()
+  }, [])
 
   const renderLoading = () => {
     return (
@@ -73,17 +165,11 @@ export default RoomScreen = () => {
     )
   }
 
-  // helper method that sends a message
-
-  const handleSend = (newMessage = []) => {
-    setMessages(GiftedChat.append(messages, newMessage))
-  }
-
   return (
     <GiftedChat
       messages={messages}
-      onSend={(newMessage) => handleSend(newMessage)}
-      user={{id: 1, name: 'User Test'}}
+      onSend={handleSend}
+      user={{_id: currentUser.uid}}
       renderBubble={renderBubble}
       placeholder="Type your message here..."
       showUserAvatar
@@ -92,6 +178,7 @@ export default RoomScreen = () => {
       scrollToBottom
       scrollToBottomComponent={scrollToBottomComponent}
       renderLoading={renderLoading}
+      renderSystemMessage={renderSystemMessage}
     />
   )
 }
@@ -110,5 +197,15 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
+  },
+  systemMessageWrapper: {
+    backgroundColor: '#6646ee',
+    borderRadius: 4,
+    padding: 5,
+  },
+  systemMessageText: {
+    fontSize: 14,
+    color: '#fff',
+    fontWeight: 'bold',
   },
 })

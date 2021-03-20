@@ -24,6 +24,9 @@ export default HomeScreen = ({navigation}) => {
             _id: documentSnapshot.id,
             // give defaults
             name: '',
+            latestMessage: {
+              text: '',
+            },
             ...documentSnapshot.data(),
           }
         })
@@ -57,7 +60,7 @@ export default HomeScreen = ({navigation}) => {
           >
             <List.Item
               title={item.name}
-              description="Item description"
+              description={`${item.latestMessage.user}: ${item.latestMessage.text}`}
               titleNumberOfLines={1}
               titleStyle={styles.listTitle}
               descriptionStyle={styles.listDescription}
