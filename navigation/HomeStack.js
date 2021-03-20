@@ -6,7 +6,7 @@ import {IconButton} from 'react-native-paper'
 
 import AddRoomScreen from '../screens/AddRoomScreen'
 
-const Stack = createStackNavigator()
+import RoomScreen from '../screens/RoomScreen'
 
 // create two new instances
 const ChatAppStack = createStackNavigator()
@@ -37,6 +37,13 @@ const ChatApp = () => {
               onPress={() => navigation.navigate('AddRoom')}
             />
           ),
+        })}
+      />
+      <ChatAppStack.Screen
+        name="Room"
+        component={RoomScreen}
+        options={({route}) => ({
+          title: route.params.thread.name,
         })}
       />
     </ChatAppStack.Navigator>

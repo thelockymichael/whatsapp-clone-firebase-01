@@ -1,5 +1,5 @@
 import React, {useContext, useState, useEffect} from 'react'
-import {View, StyleSheet, FlatList} from 'react-native'
+import {View, StyleSheet, FlatList, TouchableOpacity} from 'react-native'
 import {List, Divider} from 'react-native-paper'
 import {Title} from 'react-native-paper'
 import {AuthContext} from '../navigation/AuthProvider'
@@ -11,7 +11,6 @@ import 'firebase/firestore'
 import Loading from '../components/Loading'
 
 export default HomeScreen = ({navigation}) => {
-  const {user, logout} = useContext(AuthContext)
   const [threads, setThreads] = useState([])
   const [loading, setLoading] = useState(true)
 
@@ -53,14 +52,18 @@ export default HomeScreen = ({navigation}) => {
         keyExtractor={(item) => item._id}
         ItemSeparatorComponent={() => <Divider />}
         renderItem={({item}) => (
-          <List.Item
-            title={item.name}
-            description="Item description"
-            titleNumberOfLines={1}
-            titleStyle={styles.listTitle}
-            descriptionStyle={styles.listDescription}
-            descriptionNumberOfLines={1}
-          />
+          <TouchableOpacity
+            onPress={() => navigation.navigate('Room', {thread: item})}
+          >
+            <List.Item
+              title={item.name}
+              description="Item description"
+              titleNumberOfLines={1}
+              titleStyle={styles.listTitle}
+              descriptionStyle={styles.listDescription}
+              descriptionNumberOfLines={1}
+            />
+          </TouchableOpacity>
         )}
       />
     </View>
