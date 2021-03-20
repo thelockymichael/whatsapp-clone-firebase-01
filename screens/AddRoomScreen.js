@@ -8,7 +8,11 @@ import FormButton from '../components/FormButton'
 import * as firebase from 'firebase'
 import 'firebase/firestore'
 
+import useStatusBar from '../utils/useStatusBar'
+
 export default AddRoomScreen = ({navigation}) => {
+  useStatusBar('dark-content')
+
   const [roomName, setRoomName] = useState('')
   // ... Firestore query will come here later
 

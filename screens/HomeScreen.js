@@ -10,7 +10,11 @@ import 'firebase/firestore'
 
 import Loading from '../components/Loading'
 
+// Statusbar color changing
+import useStatusBar from '../utils/useStatusBar'
+
 export default HomeScreen = ({navigation}) => {
+  useStatusBar('light-content')
   const [threads, setThreads] = useState([])
   const [loading, setLoading] = useState(true)
 
@@ -60,7 +64,7 @@ export default HomeScreen = ({navigation}) => {
           >
             <List.Item
               title={item.name}
-              description={`${item.latestMessage.user}: ${item.latestMessage.text}`}
+              description={item.latestMessage.text}
               titleNumberOfLines={1}
               titleStyle={styles.listTitle}
               descriptionStyle={styles.listDescription}

@@ -1,4 +1,4 @@
-import React from 'react'
+import React, {useContext} from 'react'
 import {createStackNavigator} from '@react-navigation/stack'
 import HomeScreen from '../screens/HomeScreen'
 
@@ -8,11 +8,15 @@ import AddRoomScreen from '../screens/AddRoomScreen'
 
 import RoomScreen from '../screens/RoomScreen'
 
+import {AuthContext} from '../navigation/AuthProvider'
+
 // create two new instances
 const ChatAppStack = createStackNavigator()
 const ModalStack = createStackNavigator()
 
 const ChatApp = () => {
+  const {logout} = useContext(AuthContext)
+
   return (
     <ChatAppStack.Navigator
       screenOptions={{
@@ -35,6 +39,14 @@ const ChatApp = () => {
               size={28}
               color="#ffffff"
               onPress={() => navigation.navigate('AddRoom')}
+            />
+          ),
+          headerLeft: () => (
+            <IconButton
+              icon="logout"
+              size={28}
+              color="#ffffff"
+              onPress={() => logout()}
             />
           ),
         })}

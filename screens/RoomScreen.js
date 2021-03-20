@@ -8,7 +8,10 @@ import {AuthContext} from '../navigation/AuthProvider'
 import * as firebase from 'firebase'
 import 'firebase/firestore'
 
+import useStatusBar from '../utils/useStatusBar'
+
 export default RoomScreen = ({route}) => {
+  useStatusBar('light-content')
   // Get logged in user data from Context
   const {user} = useContext(AuthContext)
   // Convert user data to readable JSON
