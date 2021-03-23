@@ -6,10 +6,15 @@ import {StyleSheet, Text, View} from 'react-native'
 import Providers from './navigation'
 
 export default App = () => {
-  if (!firebase.apps.length) {
-    console.log('Connected with firebase', apiKeys.firebaseConfig)
-    firebase.initializeApp(apiKeys.firebaseConfig)
-  }
+  return (
+    <View>
+      <Text>Test 123</Text>
+    </View>
+  )
+  // if (!firebase.apps.length) {
+  //   console.log('Connected with firebase', apiKeys.firebaseConfig)
+  //   firebase.initializeApp(apiKeys.firebaseConfig)
+  // }
 
-  return <Providers />
+  // return <Providers />
 }
